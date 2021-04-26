@@ -18,9 +18,9 @@ func main() {
 		Addr:    port,
 		Handler: routes.Routes(dbCon),
 	}
+	fmt.Printf("Serving on %v\n", port)
 
 	if err := server.ListenAndServe(); err != nil {
 		log.Fatal(fmt.Sprintf("Error on listen and serve: %v", err))
 	}
-	fmt.Printf("Serving on %v\n", port)
 }

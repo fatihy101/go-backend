@@ -15,11 +15,33 @@ func Routes(db *db.DBHandle) *chi.Mux {
 }
 
 func allRoutes(r chi.Router) {
-	// r.Route("/auth")
-	// r.Route("/products")
-	// r.Route("all_user_types")
-	// r.Route("/clients")
-	// r.Route("/renters")
-	// r.Route("/orders")
-	// r.Route("/addresses")
+	r.Route("/auth", authRoutes)
+	r.Route("/products", productRoutes)
+	r.Route("/clients", clientRoutes)
+	r.Route("/renters", renterRoutes)
+	r.Route("/orders", orderRoutes)
+	r.Route("/addresses", addressRoutes)
+}
+
+func authRoutes(r chi.Router) {
+	// r.Post("verifyUser",)
+
+}
+
+func productRoutes(r chi.Router) {
+}
+
+func clientRoutes(r chi.Router) {
+	r.Get("/", getOneClient)
+}
+
+func renterRoutes(r chi.Router) {
+}
+
+func orderRoutes(r chi.Router) {
+
+}
+
+func addressRoutes(r chi.Router) {
+
 }

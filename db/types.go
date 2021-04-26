@@ -46,12 +46,6 @@ type Renter struct { // TODO: FUTURE Add geolocation on search from map.
 	RenterAdress   Address
 }
 
-type User struct { // Renter + Client
-	bongo.DocumentBase `bson:",inline"`
-	Type,
-	UID string
-}
-
 type Order struct {
 	bongo.DocumentBase `bson:",inline"`
 	Product            Product
