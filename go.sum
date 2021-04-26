@@ -1,6 +1,10 @@
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/go-bongo/bongo v0.10.4 h1:equAJCu7im1+kVmOJw4929ijR7peemzx3Qkzk/2hWSI=
 github.com/go-bongo/bongo v0.10.4/go.mod h1:D6pn2yWfb7NzktE9m7fW7wIOHSinlQ5glp8u1XNv4So=
+github.com/go-chi/chi v1.5.4 h1:QHdzF2szwjqVV4wmByUnTcsbIg7UGaQ0tPF2t5GcAIs=
+github.com/go-chi/chi v1.5.4/go.mod h1:uaf8YgoFazUOkPBG7fxPftUylNumIev9awIWOENIuEg=
+github.com/go-chi/chi/v5 v5.0.2 h1:4xKeALZdMEsuI5s05PU2Bm89Uc5iM04qFubUCl5LfAQ=
+github.com/go-chi/chi/v5 v5.0.2/go.mod h1:DslCQbL2OYiznFReuXYUmQ2hGd1aDpCnlMNITLSKoi8=
 github.com/maxwellhealth/go-dotaccess v0.0.0-20190924013105-74ea4f4ca4eb h1:7QQZMDs2zcrSN0m4wcz3uEhHcJKKzOm4mD9K2Sfh/OM=
 github.com/maxwellhealth/go-dotaccess v0.0.0-20190924013105-74ea4f4ca4eb/go.mod h1:DT6yK3gKIe7VmI/yTJVISoF40uf/2TORlEIHhffjFvE=
 github.com/oleiade/reflections v1.0.1 h1:D1XO3LVEYroYskEsoSiGItp9RUxG6jWnCVvrqH0HHQM=
