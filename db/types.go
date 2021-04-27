@@ -3,65 +3,78 @@ package db
 import (
 	"time"
 
-	"github.com/go-bongo/bongo"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type DBHandle struct {
-	db *bongo.Connection
+	db *mongo.Database
+}
+
+type Base struct {
+	ID        primitive.ObjectID `bson:"_id,omitempty"`
+	CreatedAt time.Time          `bson:"created_at,omitempty"`
+	UpdatedAt time.Time          `bson:"updated_at,omitempty"`
+}
+
+type UserRole struct {
+	Base  `bson:",inline"`
+	Email string `json:"email"`
+	Role  string `json:"role"`
 }
 
 type Address struct {
-	bongo.DocumentBase `bson:",inline"`
-	Title,
-	City,
-	State,
-	Zipcode,
-	Street,
-	BuildingNo,
-	Description string
+	Base        `bson:",inline"`
+	Title       string `json:"title"`
+	City        string `json:"city"`
+	State       string `json:"state"`
+	Zipcode     string `json:"zipcode"`
+	Street      string `json:"street"`
+	BuildingNo  string `json:"building_no"`
+	Description string `json:"description"`
 }
 
 type Client struct {
-	bongo.DocumentBase `bson:",inline"`
-	BirthdayDate       time.Time
-	Email,
-	Name,
-	Surname,
-	PhoneNumber string
-	ImagePath     Image
-	ClientAddress Address
+	Base          `bson:",inline"`
+	BirthdayDate  time.Time
+	Email         string  `json:"email"`
+	Name          string  `json:"name"`
+	Surname       string  `json:"surname"`
+	PhoneNumber   string  `json:"phone_number"`
+	ImagePath     Image   `json:"image_path"`
+	ClientAddress Address `json:"client_address"`
 }
 
 type Renter struct { // TODO: FUTURE Add geolocation on search from map.
-	bongo.DocumentBase `bson:",inline"`
-	Name,
-	Surname,
-	Email,
-	StoreInfo,
-	StoreName,
-	PhoneNumber string
-	Rating         float32
-	ProfilePicPath Image
-	HeaderPicPath  Image
-	RenterAdress   Address
+	Base           `bson:",inline"`
+	Name           string  `json:"name"`
+	Surname        string  `json:"surname"`
+	Email          string  `json:"email"`
+	StoreInfo      string  `json:"store_info"`
+	StoreName      string  `json:"store_name"`
+	PhoneNumber    string  `json:"phone_number"`
+	Rating         float32 `json:"rating"`
+	ProfilePicPath Image   `json:"profile_pic_path"`
+	HeaderPicPath  Image   `json:"header_pic_path"`
+	RenterAddress  Address `json:"renter_address"`
 }
 
 type Order struct {
-	bongo.DocumentBase `bson:",inline"`
-	Product            Product
-	Client             Client
-	Renter             Renter
-	DeliveryType       string
-	Address            Address
-	IsRental           bool
-	InitalImages       []Image
+	Base         `bson:",inline"`
+	Product      Product
+	Client       Client
+	Renter       Renter
+	DeliveryType string
+	Address      Address
+	IsRental     bool
+	InitalImages []Image
 }
 
 type Image struct {
-	bongo.DocumentBase `bson:",inline"`
-	ImageName          string
+	Base      `bson:",inline"`
+	ImageName string
 }
 
 type Product struct {
-	bongo.DocumentBase `bson:",inline"`
+	Base `bson:",inline"`
 }

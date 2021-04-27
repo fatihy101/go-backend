@@ -12,7 +12,7 @@ import (
 func main() {
 	// TODO get configuration from config.json file
 	var port = ":4002"
-	dbCon := db.OpenConnection("localhost", "enstrurent")
+	dbCon := db.OpenConnection("mongodb://localhost:27017/", "enstrurent")
 
 	server := &http.Server{
 		Addr:    port,

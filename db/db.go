@@ -1,22 +1,28 @@
 package db
 
 import (
+	"context"
 	"log"
 
-	"github.com/go-bongo/bongo"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+func (d *DBHandle) MongoDB() *mongo.Database {
+	return d.db
+}
+
 func OpenConnection(conString string, dbName string) *DBHandle {
-	config := &bongo.Config{
-		ConnectionString: conString,
-		Database:         dbName,
-	}
-
-	connection, err := bongo.Connect(config)
-
+	ctx := context.TODO()
+	clientOptions := options.Client().ApplyURI(conString)
+	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	return &DBHandle{db: connection}
+	if err = client.Ping(ctx, nil); err != nil {
+		log.Fatal(err)
+	}
+
+	return &DBHandle{db: client.Database(dbName)}
 }
