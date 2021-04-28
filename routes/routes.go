@@ -7,13 +7,13 @@ import (
 )
 
 const (
-	UserRoleCollection = "user_types"
-	ClientCollection   = "clients"
-	RenterCollection   = "renters"
-	AddressCollection  = "addresses"
-	OrderCollection    = "orders"
-	PhotoCollection    = "photos"
-	ProductCollection  = "products"
+	UserCredsCollection = "credentials"
+	ClientCollection    = "clients"
+	RenterCollection    = "renters"
+	AddressCollection   = "addresses"
+	OrderCollection     = "orders"
+	PhotoCollection     = "photos"
+	ProductCollection   = "products"
 )
 
 func Routes(db *db.DBHandle) *chi.Mux {
@@ -36,7 +36,7 @@ func allRoutes(r chi.Router) {
 
 func authRoutes(r chi.Router) {
 	r.Post("/login", login)
-	r.Post("/sign_up_client", signUpClient)
+	r.Post("/sign_up", signUpClient)
 }
 
 func productRoutes(r chi.Router) {

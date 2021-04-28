@@ -9,7 +9,7 @@ import (
 )
 
 func (d *DBHandle) MongoDB() *mongo.Database {
-	return d.db
+	return d.mdb
 }
 
 func OpenConnection(conString string, dbName string) *DBHandle {
@@ -24,5 +24,13 @@ func OpenConnection(conString string, dbName string) *DBHandle {
 		log.Fatal(err)
 	}
 
-	return &DBHandle{db: client.Database(dbName)}
+	return &DBHandle{mdb: client.Database(dbName)}
+}
+
+func (d *DBHandle) SaveOne(collection string, ctx context.Context, data interface{}) interface{} {
+	id, err := d.mdb.Collection(collection).InsertOne(ctx, data)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return id.InsertedID
 }

@@ -8,7 +8,7 @@ import (
 )
 
 type DBHandle struct {
-	db *mongo.Database
+	mdb *mongo.Database
 }
 
 type Base struct {
@@ -17,10 +17,11 @@ type Base struct {
 	UpdatedAt time.Time          `bson:"updated_at,omitempty"`
 }
 
-type UserRole struct {
-	Base  `bson:",inline"`
-	Email string `json:"email" bson:"email"`
-	Role  string `json:"role" bson:"role"`
+type UserCredentials struct {
+	Base     `bson:",inline"`
+	Email    string `json:"email"`
+	Role     string `json:"role"`
+	Password string `json:"password"`
 }
 
 type Address struct {
@@ -54,9 +55,9 @@ type Renter struct { // TODO: FUTURE Add geolocation on search from map.
 	StoreName      string  `json:"store_name" bson:"store_name"`
 	PhoneNumber    string  `json:"phone_number" bson:"phone_number"`
 	Rating         float32 `json:"rating" bson:"rating"`
-	ProfilePicPath Image   `json:"profile_pic_path" bson:"profile_pic_path"`
-	HeaderPicPath  Image   `json:"header_pic_path" bson:"header_pic_path"`
-	RenterAddress  Address `json:"renter_address" bson:"renter_address"`
+	ProfilePicPath Image   `json:"profile_pic_path" bson:"profile_pic_path,omitempty"`
+	HeaderPicPath  Image   `json:"header_pic_path" bson:"header_pic_path,omitempty"`
+	RenterAddress  Address `json:"renter_address" bson:"renter_address,omitempty"`
 }
 
 type Order struct {

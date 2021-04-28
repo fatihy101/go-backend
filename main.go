@@ -6,13 +6,14 @@ import (
 	"net/http"
 
 	"enstrurent.com/server/db"
+	"enstrurent.com/server/flags"
 	"enstrurent.com/server/routes"
 )
 
 func main() {
-	// TODO get configuration from config.json file
-	var port = ":4002"
-	dbCon := db.OpenConnection("mongodb://localhost:27017/", "enstrurent")
+	conf := flags.InitConfig()
+	var port = conf.SERVER_PORT
+	dbCon := db.OpenConnection(conf.CON_STR, conf.DBNAME)
 
 	server := &http.Server{
 		Addr:    port,
