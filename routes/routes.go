@@ -6,16 +6,6 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-const (
-	UserCredsCollection = "credentials"
-	ClientCollection    = "clients"
-	RenterCollection    = "renters"
-	AddressCollection   = "addresses"
-	OrderCollection     = "orders"
-	PhotoCollection     = "photos"
-	ProductCollection   = "products"
-)
-
 func Routes(db *db.DBHandle) *chi.Mux {
 	router := chi.NewRouter()
 	router.Use(middleware.Logger)

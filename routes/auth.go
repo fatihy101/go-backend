@@ -32,21 +32,23 @@ func login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	getDB(r)
+
 	// TODO Get role from context
 }
 
 func signUpClient(w http.ResponseWriter, r *http.Request) {
 	// Decode request info.
-	var result map[string]interface{}
-	json.NewDecoder(r.Body).Decode(&result)
-	email := fmt.Sprint(result["email"])
-	password := fmt.Sprint(result["password"])
+	var body map[string]interface{}
+	json.NewDecoder(r.Body).Decode(&body)
+	email := fmt.Sprint(body["email"])
+	password := fmt.Sprint(body["password"])
 
 	mdb := getDB(r)
 	// Check is user registered before or not
 	var qResult bson.M
-	filter := bson.M{"email": email}
-	mdb.MongoDB().Collection(UserCredsCollection).FindOne(r.Context(), filter).Decode(&qResult)
+
+	mdb.GetCredsByEmail(r.Context(), email, &qResult)
 
 	if len(qResult) != 0 {
 		http.Error(w, "User already registered with this email!", http.StatusConflict)
@@ -55,7 +57,7 @@ func signUpClient(w http.ResponseWriter, r *http.Request) {
 
 	// Set credentials of user
 	var currentRole string
-	if result["store_name"] == nil {
+	if body["store_name"] == nil {
 		currentRole = ClientRole
 	} else {
 		currentRole = RenterRole
@@ -67,7 +69,7 @@ func signUpClient(w http.ResponseWriter, r *http.Request) {
 		Role:     currentRole,
 	}
 	// Parse data to json again.
-	jsonData, err := json.Marshal(result)
+	jsonData, err := json.Marshal(body)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
@@ -78,13 +80,13 @@ func signUpClient(w http.ResponseWriter, r *http.Request) {
 	if currentRole == ClientRole {
 		var clientInfo db.Client
 		dec.Decode(&clientInfo) // decode to struct
-		mdb.SaveOne(UserCredsCollection, r.Context(), role)
-		mdb.SaveOne(ClientCollection, r.Context(), clientInfo)
+		mdb.SaveOne(db.UserCredsCollection, r.Context(), role)
+		mdb.SaveOne(db.ClientCollection, r.Context(), clientInfo)
 	} else {
 		var renterInfo db.Renter
 		dec.Decode(&renterInfo)
-		mdb.SaveOne(UserCredsCollection, r.Context(), role)
-		mdb.SaveOne(RenterCollection, r.Context(), renterInfo)
+		mdb.SaveOne(db.UserCredsCollection, r.Context(), role)
+		mdb.SaveOne(db.RenterCollection, r.Context(), renterInfo)
 	}
 
 	// Return jwt
