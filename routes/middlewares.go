@@ -2,9 +2,11 @@ package routes
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"enstrurent.com/server/db"
+	"github.com/dgrijalva/jwt-go"
 )
 
 type key int // To supress a warning
@@ -26,5 +28,40 @@ func JSONResponseMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		next.ServeHTTP(w, r)
+	})
+}
+
+func AuthMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Get cookie from request.
+		token_str := r.Header.Get("token")
+		// Check token string is empty.
+		if token_str == "" {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+		// Check token.
+		token, err := checkToken(token_str)
+		if err != nil {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+		// Get email from token.
+		claims := token.Claims.(jwt.MapClaims)
+		email := claims["email"]
+		if email == nil {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+		mdb := getDB(r)
+		creds := mdb.GetCredsByEmail(r.Context(), fmt.Sprint(email))
+		if creds.Role != claims["role"] {
+			http.Error(w, "role and email does not match", http.StatusUnauthorized)
+			return
+		}
+		// Pass the email to context
+		ctx := r.Context()
+		ctx = context.WithValue(ctx, UserEmailContext, email)
+		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
