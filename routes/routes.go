@@ -10,6 +10,7 @@ func Routes(db *db.DBHandle) *chi.Mux {
 	router := chi.NewRouter()
 	router.Use(middleware.Logger)
 	router.Use(DBMiddleware(db))
+	router.Use(JSONResponseMiddleware)
 	router.Route("/", allRoutes)
 
 	return router
@@ -26,7 +27,7 @@ func allRoutes(r chi.Router) {
 
 func authRoutes(r chi.Router) {
 	r.Post("/login", login)
-	r.Post("/sign_up", signUpClient)
+	r.Post("/sign_up", signUp)
 }
 
 func productRoutes(r chi.Router) {

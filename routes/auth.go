@@ -2,13 +2,13 @@ package routes
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"time"
 
 	"enstrurent.com/server/db"
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 const (
@@ -16,6 +16,16 @@ const (
 	RenterRole   = "renter"
 	ExpiresHours = time.Hour * 96 // 4 days
 )
+
+type ResponseClient struct {
+	db.Client
+	Token string `json:"token"`
+}
+
+type ResponseRenter struct {
+	db.Renter
+	Token string `json:"token"`
+}
 
 type LoginInfo struct {
 	Email    string `json:"email"`
@@ -31,26 +41,40 @@ func login(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	mdb := getDB(r)
 
-	getDB(r)
+	creds := mdb.GetCredsByEmail(r.Context(), info.Email)
 
-	// TODO Get role from context
+	if creds.Email == "" {
+		http.Error(w, "email is not registered", http.StatusUnauthorized)
+	}
+
+	if CompareHashAndPassword(creds.Password, info.Password) {
+		createResponse(creds, w, r.Context(), mdb)
+	} else {
+		http.Error(w, "password is not valid", http.StatusUnauthorized)
+	}
 }
 
-func signUpClient(w http.ResponseWriter, r *http.Request) {
+// ADD created date to sign up
+func signUp(w http.ResponseWriter, r *http.Request) {
 	// Decode request info.
+	var email, password string
 	var body map[string]interface{}
 	json.NewDecoder(r.Body).Decode(&body)
-	email := fmt.Sprint(body["email"])
-	password := fmt.Sprint(body["password"])
+	if body["email"] == nil || body["password"] == nil {
+		http.Error(w, "Email or password is null!", http.StatusBadRequest)
+		return
+	}
+	email = fmt.Sprint(body["email"])
+	password = fmt.Sprint(body["password"])
 
 	mdb := getDB(r)
 	// Check is user registered before or not
-	var qResult bson.M
 
-	mdb.GetCredsByEmail(r.Context(), email, &qResult)
+	creds := mdb.GetCredsByEmail(r.Context(), email)
 
-	if len(qResult) != 0 {
+	if len(creds.Email) != 0 {
 		http.Error(w, "User already registered with this email!", http.StatusConflict)
 		return
 	}
@@ -89,14 +113,25 @@ func signUpClient(w http.ResponseWriter, r *http.Request) {
 		mdb.SaveOne(db.RenterCollection, r.Context(), renterInfo)
 	}
 
-	// Return jwt
-	token, err := generateToken(email, currentRole, time.Now().Add(ExpiresHours).Unix())
+	createResponse(role, w, r.Context(), mdb)
+}
 
+func createResponse(creds db.UserCredentials, w http.ResponseWriter, ctx context.Context, mdb *db.DBHandle) {
+	token, err := generateToken(creds.Email, creds.Role, ExpiresHours)
 	if err != nil {
-		http.Error(w, "Something went wrong with authentication", http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-
-	// Encode with json
-	json.NewEncoder(w).Encode(map[string]string{"token": token})
+	encoder := json.NewEncoder(w)
+	if creds.Role == RenterRole {
+		encoder.Encode(ResponseRenter{
+			Renter: mdb.GetRenterByEmail(ctx, creds.Email),
+			Token:  token,
+		})
+	} else if creds.Role == ClientRole {
+		encoder.Encode(ResponseClient{
+			Client: mdb.GetClientByEmail(ctx, creds.Email),
+			Token:  token,
+		})
+	}
 }

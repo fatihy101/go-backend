@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"fmt"
 	"log"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -46,6 +47,26 @@ func (d *DBHandle) SaveOne(collection string, ctx context.Context, data interfac
 	return id.InsertedID
 }
 
-func (d *DBHandle) GetCredsByEmail(ctx context.Context, email string, qResult *bson.M) {
-	d.mdb.Collection(UserCredsCollection).FindOne(ctx, bson.M{"email": email}).Decode(qResult)
+func (d *DBHandle) GetCredsByEmail(ctx context.Context, email string) UserCredentials {
+	var res UserCredentials
+	d.mdb.Collection(UserCredsCollection).FindOne(ctx, bson.M{"email": email}).Decode(&res)
+	return res
+}
+
+func (d *DBHandle) GetRenterByEmail(ctx context.Context, email string) Renter {
+	var res Renter
+	ErrorCheck(d.mdb.Collection(RenterCollection).FindOne(ctx, bson.M{"email": email}).Decode(&res))
+	return res
+}
+
+func (d *DBHandle) GetClientByEmail(ctx context.Context, email string) Client {
+	var res Client
+	ErrorCheck(d.mdb.Collection(ClientCollection).FindOne(ctx, bson.M{"email": email}).Decode(&res))
+	return res
+}
+
+func ErrorCheck(err error) {
+	if err != nil {
+		log.Fatal(fmt.Sprintf("Error on db get: %v", err))
+	}
 }

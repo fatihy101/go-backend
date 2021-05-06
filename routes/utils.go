@@ -3,6 +3,7 @@ package routes
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"enstrurent.com/server/db"
 	"enstrurent.com/server/flags"
@@ -27,11 +28,11 @@ func getDB(r *http.Request) *db.DBHandle {
 	return r.Context().Value(DBContext).(*db.DBHandle)
 }
 
-func generateToken(email string, role string, expires int64) (token string, err error) {
+func generateToken(email string, role string, expires time.Duration) (token string, err error) {
 	claims := jwt.MapClaims{}
 	claims["email"] = email
 	claims["role"] = role
-	claims["exp"] = expires
+	claims["exp"] = time.Now().Add(expires).Unix()
 	return jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(flags.GetConfig().JWT_KEY))
 }
 
