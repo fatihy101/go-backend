@@ -4,6 +4,14 @@ import (
 	"net/http"
 )
 
-func getOneClient(w http.ResponseWriter, r *http.Request) {
+func getClientInfo(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func updateClientInfo(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func updateClientPicture(w http.ResponseWriter, r *http.Request) {
 
 }

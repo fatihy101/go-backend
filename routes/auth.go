@@ -17,13 +17,7 @@ const (
 	ExpiresHours = time.Hour * 96 // 4 days
 )
 
-type ResponseClient struct {
-	db.Client
-	Token string `json:"token"`
-}
-
-type ResponseRenter struct {
-	db.Renter
+type AuthResponse struct {
 	Token string `json:"token"`
 }
 
@@ -123,15 +117,7 @@ func createResponse(creds db.UserCredentials, w http.ResponseWriter, ctx context
 		return
 	}
 	encoder := json.NewEncoder(w)
-	if creds.Role == RenterRole {
-		encoder.Encode(ResponseRenter{
-			Renter: mdb.GetRenterByEmail(ctx, creds.Email),
-			Token:  token,
-		})
-	} else if creds.Role == ClientRole {
-		encoder.Encode(ResponseClient{
-			Client: mdb.GetClientByEmail(ctx, creds.Email),
-			Token:  token,
-		})
-	}
+	encoder.Encode(AuthResponse{
+		Token: token,
+	})
 }

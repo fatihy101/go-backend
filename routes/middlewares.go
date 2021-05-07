@@ -55,13 +55,15 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		}
 		mdb := getDB(r)
 		creds := mdb.GetCredsByEmail(r.Context(), fmt.Sprint(email))
-		if creds.Role != claims["role"] {
+		role := claims["role"].(string)
+		if creds.Role != role {
 			http.Error(w, "role and email does not match", http.StatusUnauthorized)
 			return
 		}
 		// Pass the email to context
 		ctx := r.Context()
 		ctx = context.WithValue(ctx, UserEmailContext, email)
+		ctx = context.WithValue(ctx, UserRoleContext, role)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
