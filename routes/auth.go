@@ -41,12 +41,14 @@ func login(w http.ResponseWriter, r *http.Request) {
 
 	if creds.Email == "" {
 		http.Error(w, "email is not registered", http.StatusUnauthorized)
+		return
 	}
 
 	if CompareHashAndPassword(creds.Password, info.Password) {
 		createResponse(creds, w, r.Context(), mdb)
 	} else {
 		http.Error(w, "password is not valid", http.StatusUnauthorized)
+		return
 	}
 }
 
@@ -98,11 +100,15 @@ func signUp(w http.ResponseWriter, r *http.Request) {
 	if currentRole == ClientRole {
 		var clientInfo db.Client
 		dec.Decode(&clientInfo) // decode to struct
+		clientInfo.CreatedAt = time.Now()
+		clientInfo.UpdatedAt = time.Now()
 		mdb.SaveOne(db.UserCredsCollection, r.Context(), role)
 		mdb.SaveOne(db.ClientCollection, r.Context(), clientInfo)
 	} else {
 		var renterInfo db.Renter
 		dec.Decode(&renterInfo)
+		renterInfo.CreatedAt = time.Now()
+		renterInfo.UpdatedAt = time.Now()
 		mdb.SaveOne(db.UserCredsCollection, r.Context(), role)
 		mdb.SaveOne(db.RenterCollection, r.Context(), renterInfo)
 	}
