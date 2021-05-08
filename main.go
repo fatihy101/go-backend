@@ -15,7 +15,7 @@ import (
 func main() {
 	conf := flags.InitConfig()
 	// var port = conf.SERVER_PORT
-	var port = os.Getenv("PORT")
+	var port = ":" + os.Getenv("PORT") // heroku version
 	dbCon := db.OpenConnection(conf.CON_STR, conf.DBNAME)
 
 	server := &http.Server{
