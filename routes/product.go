@@ -11,11 +11,31 @@ import (
 )
 
 func getOneProduct(w http.ResponseWriter, r *http.Request) { // Guest OP
+	collection := getCollection(r, db.ProductCollection)
+	singleResult := collection.FindOne(r.Context(), bson.M{"_id": chi.URLParam(r, "id")})
+	var product db.Product
+	singleResult.Decode(&product)
 
+	json.NewEncoder(w).Encode(product)
 }
 
 func getAllProducts(w http.ResponseWriter, r *http.Request) { // Guest OP
-	// TODO by location
+	// TODO do by location
+	collection := getCollection(r, db.ProductCollection)
+	mCursor, err := collection.Find(r.Context(), bson.M{"deleted_at": time.Time{}})
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	var products []db.Product
+	err = mCursor.Decode(&products)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	json.NewEncoder(w).Encode(products)
 }
 
 func getRenterProducts(w http.ResponseWriter, r *http.Request) { // Renter OP

@@ -15,6 +15,7 @@ type Base struct {
 	ID        primitive.ObjectID `bson:"_id,omitempty"`
 	CreatedAt time.Time          `bson:"created_at,omitempty"`
 	UpdatedAt time.Time          `bson:"updated_at,omitempty"`
+	DeletedAt time.Time          `bson:"deleted_at,omitempty"`
 }
 
 type UserCredentials struct {

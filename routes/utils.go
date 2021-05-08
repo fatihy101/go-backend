@@ -8,6 +8,7 @@ import (
 	"enstrurent.com/server/db"
 	"enstrurent.com/server/flags"
 	"github.com/dgrijalva/jwt-go"
+	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -26,6 +27,10 @@ func CompareHashAndPassword(hash string, password string) bool {
 
 func getDB(r *http.Request) *db.DBHandle {
 	return r.Context().Value(DBContext).(*db.DBHandle)
+}
+
+func getCollection(r *http.Request, collectionName string) *mongo.Collection {
+	return r.Context().Value(DBContext).(*db.DBHandle).MongoDB().Collection(collectionName)
 }
 
 func generateToken(email string, role string, expires time.Duration) (token string, err error) {
