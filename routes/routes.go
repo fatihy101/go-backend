@@ -1,6 +1,9 @@
 package routes
 
 import (
+	"encoding/json"
+	"net/http"
+
 	"enstrurent.com/server/db"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
@@ -17,6 +20,9 @@ func Routes(db *db.DBHandle) *chi.Mux {
 }
 
 func allRoutes(r chi.Router) {
+	r.Get("/", func(rw http.ResponseWriter, r *http.Request) {
+		json.NewEncoder(rw).Encode(map[string]string{"server": "active"})
+	})
 	r.Route("/auth", authRoutes)
 	r.Route("/products", productRoutes)
 	r.With(AuthMiddleware).Route("/clients", clientRoutes)
