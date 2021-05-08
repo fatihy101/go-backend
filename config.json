@@ -1,6 +1,6 @@
 {
     "SERVER_PORT":":4001",
-    "CON_STR":"mongodb://localhost:27017/",
+    "CON_STR":"***REMOVED***",
     "DBNAME":"enstrurent",
     "JWT_KEY":"***REMOVED***"
 }
