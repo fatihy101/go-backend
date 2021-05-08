@@ -4,15 +4,18 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"enstrurent.com/server/db"
 	"enstrurent.com/server/flags"
 	"enstrurent.com/server/routes"
 )
 
+// For local db change config con str as "CON_STR":"mongodb://localhost:27017/",
 func main() {
 	conf := flags.InitConfig()
-	var port = conf.SERVER_PORT
+	// var port = conf.SERVER_PORT
+	var port = os.Getenv("PORT")
 	dbCon := db.OpenConnection(conf.CON_STR, conf.DBNAME)
 
 	server := &http.Server{
