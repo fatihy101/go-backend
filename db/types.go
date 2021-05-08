@@ -80,6 +80,7 @@ type Image struct {
 type Product struct {
 	Base              `bson:",inline"`
 	RenterID          string   `json:"renter_id" bson:"renter_id"`
+	City              string   `json:"city" bson:"city"`
 	Category          string   `json:"category" bson:"category"`
 	Brand             string   `json:"brand" bson:"brand"`
 	Model             string   `json:"model" bson:"model"`
