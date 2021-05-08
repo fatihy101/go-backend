@@ -77,5 +77,22 @@ type Image struct {
 }
 
 type Product struct {
-	Base `bson:",inline"`
+	Base              `bson:",inline"`
+	RenterID          string   `json:"renter_id" bson:"renter_id"`
+	Category          string   `json:"category" bson:"category"`
+	Brand             string   `json:"brand" bson:"brand"`
+	Model             string   `json:"model" bson:"model"`
+	Info              string   `json:"info" bson:"info"`
+	IsRental          bool     `json:"is_rental" bson:"is_rental"`
+	IsDepositRequired bool     `json:"is_deposit_required" bson:"is_deposit_required"`
+	IsOpenToSell      bool     `json:"is_open_to_sell" bson:"is_open_to_sell"`
+	IsUsed            bool     `json:"is_used" bson:"is_used"`
+	MaxRentalDays     int      `json:"max_rental_days" bson:"max_rental_days"`
+	DailyPrice        float32  `json:"daily_price" bson:"daily_price"`
+	FullPrice         float32  `json:"full_price" bson:"full_price"`
+	DepositPrice      float32  `json:"deposit_price" bson:"deposit_price"`
+	StockQuantity     int      `json:"stock_quantity" bson:"stock_quantity"`
+	DeliveryTypes     []string `json:"delivery_types" bson:"delivery_types"`
+	Images            []Image  `json:"images" bson:"images"`
+	Tags              []string `json:"tags" bson:"tags"`
 }

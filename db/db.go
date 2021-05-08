@@ -39,12 +39,12 @@ func (d *DBHandle) MongoDB() *mongo.Database {
 	return d.mdb
 }
 
-func (d *DBHandle) SaveOne(collection string, ctx context.Context, data interface{}) interface{} {
+func (d *DBHandle) SaveOne(collection string, ctx context.Context, data interface{}) (interface{}, error) {
 	id, err := d.mdb.Collection(collection).InsertOne(ctx, data)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
-	return id.InsertedID
+	return id.InsertedID, nil
 }
 
 func (d *DBHandle) GetCredsByEmail(ctx context.Context, email string) UserCredentials {
