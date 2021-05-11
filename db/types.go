@@ -26,7 +26,6 @@ type UserCredentials struct {
 }
 
 type Address struct {
-	Base        `bson:",inline"`
 	Title       string `json:"title" bson:"title"`
 	City        string `json:"city" bson:"city"`
 	State       string `json:"state" bson:"state"`
