@@ -14,4 +14,8 @@
 # Dependency directories (remove the comment below to include it)
 # vendor/
 
+# Local Docker path
 mongodata
+
+# Debug Output File
+__debug_bin

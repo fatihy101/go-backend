@@ -98,3 +98,10 @@ type Product struct {
 	Images            []Image  `json:"images" bson:"images"`
 	Tags              []string `json:"tags" bson:"tags"`
 }
+
+type City struct {
+	ID        int    `json:"id" bson:"_id"`
+	Name      string `json:"name" bson:"name"`
+	Latitude  string `json:"latitude" bson:"latitude"`
+	Longitude string `json:"longtitude" bson:"longtitude"`
+}

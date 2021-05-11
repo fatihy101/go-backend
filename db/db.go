@@ -18,6 +18,7 @@ const (
 	OrderCollection     = "orders"
 	PhotoCollection     = "photos"
 	ProductCollection   = "products"
+	CitiesCollection    = "cities"
 )
 
 func OpenConnection(conString string, dbName string) *DBHandle {

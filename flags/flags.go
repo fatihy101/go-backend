@@ -1,10 +1,14 @@
 package flags
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
+
+	"enstrurent.com/server/db"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type Configuration struct {
@@ -18,7 +22,7 @@ var config Configuration
 
 func InitConfig() Configuration {
 	// Open our jsonFile
-	jsonFile, err := os.Open("config.json")
+	jsonFile, err := os.Open("assets/json/config.json")
 
 	if err != nil {
 		fmt.Println(err)
@@ -33,4 +37,28 @@ func InitConfig() Configuration {
 
 func GetConfig() Configuration {
 	return config
+}
+
+type mytype []map[string]interface{}
+
+func InitCities(mdb *db.DBHandle) {
+	ctx := context.TODO()
+	collection := mdb.MongoDB().Collection(db.CitiesCollection)
+	cursor, _ := collection.Find(ctx, bson.D{})
+	if !cursor.Next(ctx) { // If collection empty
+		var data mytype
+		byteValue, _ := ioutil.ReadFile("assets/json/cities.json")
+		err := json.Unmarshal(byteValue, &data)
+		if err != nil {
+			fmt.Print(err)
+		}
+		var cities []interface{}
+		for _, t := range data {
+			cities = append(cities, t)
+		}
+		if _, err = collection.InsertMany(context.Background(), cities); err != nil {
+			fmt.Println(err)
+		}
+		return
+	}
 }

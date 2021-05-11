@@ -105,6 +105,7 @@ func addProduct(w http.ResponseWriter, r *http.Request) { // Renter OP
 	newProduct.RenterID = renter.ID.String()
 	newProduct.CreatedAt = time.Now()
 	newProduct.UpdatedAt = time.Now()
+	newProduct.City = renter.RenterAddress.City
 	_, err := mdb.SaveOne(db.ProductCollection, r.Context(), newProduct)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
