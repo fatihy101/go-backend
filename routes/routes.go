@@ -66,5 +66,5 @@ func orderRoutes(r chi.Router) {
 }
 
 func addressRoutes(r chi.Router) {
-
+	r.Get("/cities", GetCities)
 }

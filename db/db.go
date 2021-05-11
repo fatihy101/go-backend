@@ -66,6 +66,14 @@ func (d *DBHandle) GetClientByEmail(ctx context.Context, email string) Client {
 	return res
 }
 
+func (d *DBHandle) ProductCollection() *mongo.Collection {
+	return d.mdb.Collection(ProductCollection)
+}
+
+func (d *DBHandle) CitiesCollection() *mongo.Collection {
+	return d.mdb.Collection(CitiesCollection)
+}
+
 func ErrorCheck(err error) {
 	if err != nil {
 		log.Fatal(fmt.Sprintf("Error on db get: %v", err))

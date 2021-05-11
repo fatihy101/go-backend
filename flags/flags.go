@@ -43,7 +43,7 @@ type mytype []map[string]interface{}
 
 func InitCities(mdb *db.DBHandle) {
 	ctx := context.TODO()
-	collection := mdb.MongoDB().Collection(db.CitiesCollection)
+	collection := mdb.CitiesCollection()
 	cursor, _ := collection.Find(ctx, bson.D{})
 	if !cursor.Next(ctx) { // If collection empty
 		var data mytype
