@@ -1,9 +1,11 @@
 module enstrurent.com/server
+
 // +heroku goVersion go1.16
 go 1.16
 
 require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
+	github.com/disintegration/imaging v1.6.2
 	github.com/go-chi/chi v1.5.4
 	github.com/go-chi/chi/v5 v5.0.2
 	go.mongodb.org/mongo-driver v1.5.1

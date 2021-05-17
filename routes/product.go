@@ -11,7 +11,7 @@ import (
 )
 
 func getOneProduct(w http.ResponseWriter, r *http.Request) { // Guest OP
-	collection := getCollection(r, db.ProductCollection)
+	collection := getDB(r).ProductCollection()
 	singleResult := collection.FindOne(r.Context(), bson.M{"_id": chi.URLParam(r, "id")})
 	var product db.Product
 	singleResult.Decode(&product)
@@ -21,7 +21,7 @@ func getOneProduct(w http.ResponseWriter, r *http.Request) { // Guest OP
 
 func getAllProducts(w http.ResponseWriter, r *http.Request) { // Guest OP
 	// TODO do by location
-	collection := getCollection(r, db.ProductCollection)
+	collection := getDB(r).ProductCollection()
 	mCursor, err := collection.Find(r.Context(), bson.M{"deleted_at": time.Time{}})
 
 	if err != nil {

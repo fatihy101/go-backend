@@ -32,6 +32,7 @@ type Address struct {
 	Zipcode     string `json:"zipcode" bson:"zipcode"`
 	Street      string `json:"street" bson:"street"`
 	BuildingNo  string `json:"building_no" bson:"building_no"`
+	AddressLine string `json:"address_line" bson:"address_line"`
 	Description string `json:"description" bson:"description"`
 }
 
