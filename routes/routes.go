@@ -3,6 +3,8 @@ package routes
 import (
 	"encoding/json"
 	"net/http"
+	"os"
+	"path/filepath"
 
 	"enstrurent.com/server/db"
 	"github.com/go-chi/chi/middleware"
@@ -15,6 +17,11 @@ func Routes(db *db.DBHandle) *chi.Mux {
 	router.Use(DBMiddleware(db))
 	router.Use(JSONResponseMiddleware)
 	router.Route("/", allRoutes)
+
+	workDir, _ := os.Getwd()
+	imagesDir := filepath.Join("assets", "images")
+	filesDir := http.Dir(filepath.Join(workDir, imagesDir))
+	GetPhotos(router, "/images", filesDir)
 
 	return router
 }
