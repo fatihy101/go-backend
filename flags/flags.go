@@ -21,6 +21,10 @@ type Configuration struct {
 var config Configuration
 
 func InitConfig() Configuration {
+	err := os.Mkdir("assets/images", 0755)
+	if err != nil {
+		fmt.Println("WARNING: " + err.Error())
+	}
 	// Open our jsonFile
 	jsonFile, err := os.Open("assets/json/config.json")
 
