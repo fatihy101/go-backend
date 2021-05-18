@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -70,7 +71,9 @@ func saveImageLocal(r *http.Request, isThumbnail bool) ([]string, error) {
 		}
 		defer file.Close()
 		// Get file extension and validate the file is image.
-
+		if fileHeader.Size == 0 {
+			return nil, errors.New("there's no photo or corrupted file")
+		}
 		image, err := ioutil.TempFile(imageFolderDir, fmt.Sprintf("p-*.%v", extractExtension(fileHeader.Filename)))
 
 		if err != nil {

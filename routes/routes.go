@@ -14,6 +14,7 @@ import (
 func Routes(db *db.DBHandle) *chi.Mux {
 	router := chi.NewRouter()
 	router.Use(middleware.Logger)
+	router.Use(AllowOrigin)
 	router.Use(DBMiddleware(db))
 	router.Use(JSONResponseMiddleware)
 	router.Route("/", allRoutes)
