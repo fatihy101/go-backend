@@ -43,7 +43,7 @@ type Client struct {
 	Name          string  `json:"name" bson:"name"`
 	Surname       string  `json:"surname" bson:"surname"`
 	PhoneNumber   string  `json:"phone_number" bson:"phone_number"`
-	ImagePath     Image   `json:"image_path" bson:"image_path"`
+	ImageName     string  `json:"image_name" bson:"image_name"`
 	ClientAddress Address `json:"client_address" bson:"client_address"`
 }
 
@@ -56,25 +56,21 @@ type Renter struct { // TODO: FUTURE Add geolocation on search from map.
 	StoreName      string  `json:"store_name" bson:"store_name"`
 	PhoneNumber    string  `json:"phone_number" bson:"phone_number"`
 	Rating         float32 `json:"rating" bson:"rating"`
-	ProfilePicPath Image   `json:"profile_pic_path" bson:"profile_pic_path,omitempty"`
-	HeaderPicPath  Image   `json:"header_pic_path" bson:"header_pic_path,omitempty"`
+	ProfilePicName string  `json:"profile_pic_name" bson:"profile_pic_name,omitempty"`
+	HeaderPicName  string  `json:"header_pic_name" bson:"header_pic_name,omitempty"`
 	RenterAddress  Address `json:"renter_address" bson:"renter_address,omitempty"`
 }
 
 type Order struct {
-	Base         `bson:",inline"`
-	Product      Product
-	Client       Client
-	Renter       Renter
-	DeliveryType string `json:"delivery_type" bson:"delivery_type"`
-	Address      Address
-	IsRental     bool `json:"is_rental" bson:"is_rental"`
-	InitalImages []Image
-}
-
-type Image struct {
-	Base      `bson:",inline"`
-	ImageName string
+	Base             `bson:",inline"`
+	Product          Product
+	Client           Client
+	Renter           Renter
+	DeliveryType     string `json:"delivery_type" bson:"delivery_type"`
+	Address          Address
+	IsRental         bool     `json:"is_rental" bson:"is_rental"`
+	InitalImageNames []string `json:"initial_image_names" bson:"initial_image_names"`
+	FinalImageNames  []string `json:"final_image_names" bson:"final_image_names"`
 }
 
 type Product struct {
@@ -95,7 +91,7 @@ type Product struct {
 	DepositPrice      float32  `json:"deposit_price" bson:"deposit_price"`
 	StockQuantity     int      `json:"stock_quantity" bson:"stock_quantity"`
 	DeliveryTypes     []string `json:"delivery_types" bson:"delivery_types"`
-	Images            []Image  `json:"images" bson:"images"`
+	ImageNames        []string `json:"images_names" bson:"images_names"`
 	Tags              []string `json:"tags" bson:"tags"`
 }
 

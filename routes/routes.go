@@ -50,7 +50,7 @@ func productRoutes(r chi.Router) {
 	r.Get("/", getAllProducts) // TODO paginate
 	r.Get("/{id}", getOneProduct)
 	r.With(AuthMiddleware).Delete("/{id}", deleteProduct)
-	r.With(AuthMiddleware).Put("/product", updateProduct)
+	r.With(AuthMiddleware).Put("/", updateProduct)
 	r.With(AuthMiddleware).Get("/by_renter", getRenterProducts)
 }
 
