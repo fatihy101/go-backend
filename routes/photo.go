@@ -2,7 +2,9 @@ package routes
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 
@@ -50,4 +52,65 @@ func GetPhotos(r chi.Router, path string, root http.FileSystem) {
 		fs := http.StripPrefix(pathPrefix, http.FileServer(root))
 		fs.ServeHTTP(w, r)
 	})
+}
+
+func replaceFile(tempStr string, oldStr string) {
+	tempDir := fmt.Sprintf("%v%v%v", imageFolderDir, PathSeparator, tempStr)
+	photoDir := fmt.Sprintf("%v%v%v", imageFolderDir, PathSeparator, oldStr)
+
+	os.Remove(photoDir)
+	os.Rename(tempDir, photoDir)
+}
+
+func updatePhoto(w http.ResponseWriter, r *http.Request) {
+	photoID := r.FormValue("image_id")
+	isThumbnailStr := r.FormValue("thumbnail")
+	isThumbnail, _ := strconv.ParseBool(isThumbnailStr)
+
+	tempPhotoNames, err := saveImageLocal(r, isThumbnail)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	for _, tempPhotoName := range tempPhotoNames {
+		replaceFile(fmt.Sprint(tempPhotoName), photoID)
+		if isThumbnail {
+			replaceFile(fmt.Sprintf("thumb-%v", tempPhotoName), fmt.Sprintf("thumb-%v", photoID))
+		}
+	}
+
+}
+
+func deletePhoto(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	isThumbnailStr := chi.URLParam(r, "thumbnail")
+	isThumbnail, err := strconv.ParseBool(isThumbnailStr)
+
+	if err != nil {
+		fmt.Println("Error on deleting photo:" + err.Error())
+		return
+	}
+	// Delete from local storage.
+	imageDir := fmt.Sprintf("%v%v%v", imageFolderDir, PathSeparator, id)
+	if err := os.Remove(imageDir); err != nil {
+		fmt.Println(err.Error())
+		w.WriteHeader(http.StatusExpectationFailed)
+		json.NewEncoder(w).Encode(map[string]bool{"success": false})
+		return
+	}
+
+	if isThumbnail {
+		imageDirThumb := fmt.Sprintf("%v%v%v", imageFolderDir, PathSeparator, fmt.Sprintf("thumb-%v", id))
+		if err := os.Remove(imageDirThumb); err != nil {
+			fmt.Println(err.Error())
+			w.WriteHeader(http.StatusExpectationFailed)
+			json.NewEncoder(w).Encode(map[string]bool{"on deleting thumbnail": false})
+			return
+		}
+	}
+
+	json.NewEncoder(w).Encode(map[string]bool{"success": true})
+
 }

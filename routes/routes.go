@@ -37,7 +37,7 @@ func allRoutes(r chi.Router) {
 	r.With(AuthMiddleware).Route("/renters", renterRoutes)
 	r.With(AuthMiddleware).Route("/orders", orderRoutes)
 	r.Route("/addresses", addressRoutes)
-	r.Route("/images", ImageRoutes)
+	r.With(AuthMiddleware).Route("/images", ImageRoutes)
 }
 
 func authRoutes(r chi.Router) {
@@ -80,4 +80,6 @@ func addressRoutes(r chi.Router) {
 
 func ImageRoutes(r chi.Router) {
 	r.Post("/", addPhoto)
+	r.Delete("/{id}&{thumbnail}", deletePhoto)
+	r.Put("/", updatePhoto)
 }
