@@ -19,6 +19,7 @@ const (
 
 type AuthResponse struct {
 	Token string `json:"token"`
+	Role  string `json:"role"`
 }
 
 type LoginInfo struct {
@@ -125,5 +126,6 @@ func createResponse(creds db.UserCredentials, w http.ResponseWriter, ctx context
 	encoder := json.NewEncoder(w)
 	encoder.Encode(AuthResponse{
 		Token: token,
+		Role:  creds.Role,
 	})
 }
