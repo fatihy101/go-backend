@@ -57,14 +57,11 @@ func productRoutes(r chi.Router) {
 func clientRoutes(r chi.Router) {
 	r.Get("/", getClientInfo)
 	r.Put("/", updateClientInfo)
-	r.Put("/profile_picture", updateClientPicture)
 }
 
 func renterRoutes(r chi.Router) { // TODO Write a middleware for checking the is renters product belongings
 	r.Get("/", getRenterInfo)
-	r.Put("/header", updateStoreHeader)
 	r.Put("/info", updateRenterInfo)
-	r.Put("/profile_picture", updateStorePicture)
 }
 
 func orderRoutes(r chi.Router) {
@@ -75,7 +72,12 @@ func orderRoutes(r chi.Router) {
 }
 
 func addressRoutes(r chi.Router) {
-	r.Get("/cities", GetCities)
+	r.Get("/{address_id}", getAddress)
+	r.With(AuthMiddleware).Delete("/{address_id}", deleteAddress)
+	r.Get("/cities", getCities)
+	r.Post("/", addAddress)
+	r.With(AuthMiddleware).Put("/", updateAddress)
+
 }
 
 func ImageRoutes(r chi.Router) {
