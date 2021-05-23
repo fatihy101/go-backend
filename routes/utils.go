@@ -93,7 +93,6 @@ func saveImageLocal(r *http.Request, isThumbnail bool) ([]string, error) {
 				return nil, err
 			}
 		}
-		fmt.Println(image.Name())
 		imageNames = append(imageNames, extractImageName(image.Name())) // collect Image names
 	}
 

@@ -21,7 +21,7 @@ type Configuration struct {
 var config Configuration
 
 func InitConfig() Configuration {
-	err := os.Mkdir("assets/images", 0755)
+	err := os.Mkdir("assets/images", 0777)
 	if err != nil {
 		fmt.Println("WARNING: " + err.Error())
 	}

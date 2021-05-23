@@ -78,6 +78,10 @@ func (d *DBHandle) AddressCollection() *mongo.Collection {
 	return d.mdb.Collection(AddressCollection)
 }
 
+func (d *DBHandle) RenterCollection() *mongo.Collection {
+	return d.mdb.Collection(RenterCollection)
+}
+
 func ErrorCheck(err error) {
 	if err != nil {
 		log.Fatal(fmt.Sprintf("Error on db get: %v", err))
