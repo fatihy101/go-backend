@@ -128,7 +128,16 @@ func addProduct(w http.ResponseWriter, r *http.Request) { // Renter OP
 	newProduct.RenterID = renter.ID.Hex()
 	newProduct.CreatedAt = time.Now()
 	newProduct.UpdatedAt = time.Now()
-	newProduct.City = renter.RenterAddress.City
+	addressID, _ := primitive.ObjectIDFromHex(renter.AddressID)
+	addressResult := mdb.AddressCollection().FindOne(r.Context(), bson.M{"_id": addressID})
+	if addressResult.Err() != nil {
+		fmt.Println("Error on add product with address: " + addressResult.Err().Error())
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	var renterAddress db.Address
+	addressResult.Decode(&renterAddress)
+	newProduct.City = renterAddress.City
 	_, err := mdb.SaveOne(db.ProductCollection, r.Context(), newProduct)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
