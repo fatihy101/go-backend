@@ -26,6 +26,7 @@ type UserCredentials struct {
 }
 
 type Address struct {
+	Base        `bson:",inline"`
 	Title       string `json:"title" bson:"title"`
 	City        string `json:"city" bson:"city"`
 	State       string `json:"state" bson:"state"`
@@ -37,14 +38,14 @@ type Address struct {
 }
 
 type Client struct {
-	Base          `bson:",inline"`
-	BirthdayDate  time.Time
-	Email         string  `json:"email" bson:"email"`
-	Name          string  `json:"name" bson:"name"`
-	Surname       string  `json:"surname" bson:"surname"`
-	PhoneNumber   string  `json:"phone_number" bson:"phone_number"`
-	ImageName     string  `json:"image_name" bson:"image_name"`
-	ClientAddress Address `json:"client_address" bson:"client_address"`
+	Base         `bson:",inline"`
+	BirthdayDate time.Time
+	Email        string `json:"email" bson:"email"`
+	Name         string `json:"name" bson:"name"`
+	Surname      string `json:"surname" bson:"surname"`
+	PhoneNumber  string `json:"phone_number" bson:"phone_number"`
+	ImageName    string `json:"image_name" bson:"image_name"`
+	AddressID    string `json:"address_id" bson:"address_id"`
 }
 
 type Renter struct { // TODO: FUTURE Add geolocation on search from map.
@@ -58,7 +59,7 @@ type Renter struct { // TODO: FUTURE Add geolocation on search from map.
 	Rating         float32 `json:"rating" bson:"rating"`
 	ProfilePicName string  `json:"profile_pic_name" bson:"profile_pic_name,omitempty"`
 	HeaderPicName  string  `json:"header_pic_name" bson:"header_pic_name,omitempty"`
-	RenterAddress  Address `json:"renter_address" bson:"renter_address,omitempty"`
+	AddressID      string  `json:"address_id" bson:"address_id"`
 }
 
 type Order struct {
@@ -67,7 +68,7 @@ type Order struct {
 	Client           Client
 	Renter           Renter
 	DeliveryType     string `json:"delivery_type" bson:"delivery_type"`
-	Address          Address
+	AddressID        string
 	IsRental         bool     `json:"is_rental" bson:"is_rental"`
 	InitalImageNames []string `json:"initial_image_names" bson:"initial_image_names"`
 	FinalImageNames  []string `json:"final_image_names" bson:"final_image_names"`
