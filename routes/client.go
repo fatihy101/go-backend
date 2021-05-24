@@ -2,7 +2,6 @@ package routes
 
 import (
 	"encoding/json"
-	"errors"
 	"net/http"
 	"time"
 
@@ -41,22 +40,19 @@ func updateClientInfo(w http.ResponseWriter, r *http.Request) {
 	clientUpdated.UpdatedAt = time.Now()
 
 	mdb := getDB(r)
-	_, err = mdb.MongoDB().Collection(db.ClientCollection).ReplaceOne(r.Context(), bson.M{"email": email}, clientUpdated)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	result := mdb.MongoDB().Collection(db.ClientCollection).
+		FindOneAndReplace(r.Context(), bson.M{"email": email}, clientUpdated)
+	if result.Err() != nil {
+		http.Error(w, result.Err().Error(), http.StatusBadRequest)
 		return
 	}
 	json.NewEncoder(w).Encode(clientUpdated)
 }
 
-func updateClientPicture(w http.ResponseWriter, r *http.Request) {
-
-}
-
 func validateClient(r *http.Request) (string, error) {
 	role := r.Context().Value(UserRoleContext)
 	if role != ClientRole {
-		return "", errors.New("Unauthorized")
+		return "", ErrUnauthorized
 	}
 	return r.Context().Value(UserEmailContext).(string), nil
 }

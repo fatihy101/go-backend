@@ -13,7 +13,7 @@ import (
 func getRenterInfo(w http.ResponseWriter, r *http.Request) {
 	role := r.Context().Value(UserRoleContext)
 	if role != RenterRole {
-		w.WriteHeader(http.StatusUnauthorized)
+		http.Error(w, ErrUnauthorized.Error(), http.StatusUnauthorized)
 		return
 	}
 	email := r.Context().Value(UserEmailContext).(string)
@@ -25,18 +25,18 @@ func getRenterInfo(w http.ResponseWriter, r *http.Request) {
 }
 
 func updateRenterInfo(w http.ResponseWriter, r *http.Request) {
-	role := r.Context().Value(UserRoleContext)
-	if role != RenterRole {
-		w.WriteHeader(http.StatusUnauthorized)
+
+	email, err := validateRenter(r)
+
+	if err != nil {
+		http.Error(w, ErrUnauthorized.Error(), http.StatusUnauthorized)
 		return
 	}
-	email := r.Context().Value(UserEmailContext).(string)
-
 	var renterInfo db.Renter
 	json.NewDecoder(r.Body).Decode(&renterInfo)
 
 	if renterInfo.Email != email {
-		w.WriteHeader(http.StatusUnauthorized)
+		http.Error(w, ErrUnauthorized.Error(), http.StatusUnauthorized)
 		return
 	}
 
@@ -52,4 +52,12 @@ func updateRenterInfo(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(renterInfo)
+}
+
+func validateRenter(r *http.Request) (string, error) {
+	role := r.Context().Value(UserRoleContext)
+	if role != RenterRole {
+		return "", ErrUnauthorized
+	}
+	return r.Context().Value(UserEmailContext).(string), nil
 }

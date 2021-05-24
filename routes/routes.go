@@ -2,6 +2,7 @@ package routes
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -10,6 +11,8 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
 )
+
+var ErrUnauthorized error = errors.New("unauthorized act")
 
 func Routes(db *db.DBHandle) *chi.Mux {
 	router := chi.NewRouter()
