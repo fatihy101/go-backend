@@ -12,7 +12,7 @@ type DBHandle struct {
 }
 
 type Base struct {
-	ID        primitive.ObjectID `bson:"_id,omitempty"`
+	ID        primitive.ObjectID `bson:"_id,omitempty" json:"id"`
 	CreatedAt time.Time          `bson:"created_at,omitempty"`
 	UpdatedAt time.Time          `bson:"updated_at,omitempty"`
 	DeletedAt time.Time          `bson:"deleted_at,omitempty"`
@@ -62,16 +62,28 @@ type Renter struct { // TODO: FUTURE Add geolocation on search from map.
 	AddressID      string  `json:"address_id" bson:"address_id"`
 }
 
-type Order struct {
-	Base             `bson:",inline"`
-	Product          Product
-	Client           Client
-	Renter           Renter
-	DeliveryType     string `json:"delivery_type" bson:"delivery_type"`
-	AddressID        string
-	IsRental         bool     `json:"is_rental" bson:"is_rental"`
-	InitalImageNames []string `json:"initial_image_names" bson:"initial_image_names"`
-	FinalImageNames  []string `json:"final_image_names" bson:"final_image_names"`
+type OrderBase struct {
+	Base          `bson:",inline"`
+	ProductID     string `json:"product_id" bson:"product_id"`
+	ClientID      string `json:"client_id" bson:"client_id"`
+	AddressID     string `json:"address_id" bson:"address_id"`
+	DeliveryType  string `json:"delivery_type" bson:"delivery_type"`
+	PaymentMethod string `json:"payment_method" bson:"payment_method"`
+	OrderStatus   string `json:"order_status" bson:"order_status"`
+}
+
+type RentOrder struct {
+	OrderBase           `bson:",inline"`
+	InitalImageNames    []string `json:"initial_image_names" bson:"initial_image_names"`
+	FinalImageNames     []string `json:"final_image_names" bson:"final_image_names"`
+	NumberOfDaysForRent int      `json:"number_of_days_for_rent" bson:"number_of_days_for_rent"`
+	DepositPrice        float32  `json:"deposit_price" bson:"deposit_price"`
+	RentingPrice        float32  `json:"renting_price" bson:"renting_price"`
+}
+
+type PurchaseOrder struct {
+	OrderBase `bson:",inline"`
+	Price     float32 `json:"price" bson:"price"`
 }
 
 type Product struct {

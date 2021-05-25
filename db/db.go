@@ -2,10 +2,14 @@ package db
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
+	"net/http"
+	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -15,7 +19,7 @@ const (
 	ClientCollection    = "clients"
 	RenterCollection    = "renters"
 	AddressCollection   = "addresses"
-	OrderCollection     = "orders"
+	OrdersCollection    = "orders"
 	PhotoCollection     = "photos"
 	ProductCollection   = "products"
 	CitiesCollection    = "cities"
@@ -80,6 +84,26 @@ func (d *DBHandle) AddressCollection() *mongo.Collection {
 
 func (d *DBHandle) RenterCollection() *mongo.Collection {
 	return d.mdb.Collection(RenterCollection)
+}
+
+func (d *DBHandle) OrdersCollection() *mongo.Collection {
+	return d.mdb.Collection(OrdersCollection)
+}
+
+func (order *OrderBase) InitializeOrder(clientID string, mdb *DBHandle, w http.ResponseWriter, r *http.Request) {
+	json.NewDecoder(r.Body).Decode(&order)
+	order.ClientID = clientID
+	order.OrderStatus = "Sipariş Alındı"
+	order.CreatedAt = time.Now()
+	result, err := mdb.OrdersCollection().InsertOne(r.Context(), order)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	var id primitive.ObjectID = result.InsertedID.(primitive.ObjectID)
+	order.ID = id
+	json.NewEncoder(w).Encode(order)
 }
 
 func ErrorCheck(err error) {

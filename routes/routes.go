@@ -62,7 +62,7 @@ func clientRoutes(r chi.Router) {
 	r.Put("/", updateClientInfo)
 }
 
-func renterRoutes(r chi.Router) { // TODO Write a middleware for checking the is renters product belongings
+func renterRoutes(r chi.Router) {
 	r.Get("/", getRenterInfo)
 	r.Put("/", updateRenterInfo)
 }
