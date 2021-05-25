@@ -2,10 +2,8 @@ package db
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"log"
-	"net/http"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -90,20 +88,14 @@ func (d *DBHandle) OrdersCollection() *mongo.Collection {
 	return d.mdb.Collection(OrdersCollection)
 }
 
-func (order *OrderBase) InitializeOrder(clientID string, mdb *DBHandle, w http.ResponseWriter, r *http.Request) {
-	json.NewDecoder(r.Body).Decode(&order)
+func (order *OrderBase) InitializeOrder(clientID string, mdb *DBHandle) {
 	order.ClientID = clientID
 	order.OrderStatus = "Sipariş Alındı"
 	order.CreatedAt = time.Now()
-	result, err := mdb.OrdersCollection().InsertOne(r.Context(), order)
+}
 
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-	var id primitive.ObjectID = result.InsertedID.(primitive.ObjectID)
-	order.ID = id
-	json.NewEncoder(w).Encode(order)
+func (order *OrderBase) SetID(clientID primitive.ObjectID) {
+	order.ID = clientID
 }
 
 func ErrorCheck(err error) {

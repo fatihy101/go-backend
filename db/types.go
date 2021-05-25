@@ -62,6 +62,11 @@ type Renter struct { // TODO: FUTURE Add geolocation on search from map.
 	AddressID      string  `json:"address_id" bson:"address_id"`
 }
 
+type IOrder interface {
+	InitializeOrder(clientID string, mdb *DBHandle)
+	SetID(ClientID primitive.ObjectID)
+}
+
 type OrderBase struct {
 	Base          `bson:",inline"`
 	ProductID     string `json:"product_id" bson:"product_id"`
