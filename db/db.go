@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -68,6 +67,21 @@ func (d *DBHandle) GetClientByEmail(ctx context.Context, email string) Client {
 	return res
 }
 
+func (d *DBHandle) GetProductByID(ctx context.Context, productID primitive.ObjectID) (Product, error) {
+	res := d.mdb.Collection(ProductCollection).FindOne(ctx, bson.M{"_id": productID})
+	if res.Err() != nil {
+		return Product{}, res.Err()
+	}
+	var product Product
+	err := res.Decode(&product)
+
+	if err != nil {
+		return Product{}, err
+	}
+
+	return product, nil
+}
+
 func (d *DBHandle) ProductCollection() *mongo.Collection {
 	return d.mdb.Collection(ProductCollection)
 }
@@ -86,16 +100,6 @@ func (d *DBHandle) RenterCollection() *mongo.Collection {
 
 func (d *DBHandle) OrdersCollection() *mongo.Collection {
 	return d.mdb.Collection(OrdersCollection)
-}
-
-func (order *OrderBase) InitializeOrder(clientID string, mdb *DBHandle) {
-	order.ClientID = clientID
-	order.OrderStatus = "Sipariş Alındı"
-	order.CreatedAt = time.Now()
-}
-
-func (order *OrderBase) SetID(clientID primitive.ObjectID) {
-	order.ID = clientID
 }
 
 func ErrorCheck(err error) {

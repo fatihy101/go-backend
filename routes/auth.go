@@ -14,7 +14,7 @@ import (
 const (
 	ClientRole   = "client"
 	RenterRole   = "renter"
-	ExpiresHours = time.Hour * 96 // 4 days
+	ExpiresHours = time.Hour * 1000 // FIXME DEV PURPOSE
 )
 
 type AuthResponse struct {

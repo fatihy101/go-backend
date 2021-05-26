@@ -12,7 +12,10 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-var ErrUnauthorized error = errors.New("unauthorized act")
+var (
+	ErrWentWrong    error = errors.New("something went wrong")
+	ErrUnauthorized error = errors.New("unauthorized act")
+)
 
 func Routes(db *db.DBHandle) *chi.Mux {
 	router := chi.NewRouter()
