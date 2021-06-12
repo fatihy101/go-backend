@@ -49,6 +49,8 @@ func allRoutes(r chi.Router) {
 func authRoutes(r chi.Router) {
 	r.Post("/login", login)
 	r.Post("/sign_up", signUp)
+	// Token validation occurs in middleware. Function is placeholder.
+	r.With(AuthMiddleware).Post("/validate", func(rw http.ResponseWriter, r *http.Request) {})
 }
 
 func productRoutes(r chi.Router) {
