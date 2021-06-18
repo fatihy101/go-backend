@@ -110,6 +110,7 @@ type Product struct {
 	StockQuantity     int      `json:"stock_quantity" bson:"stock_quantity"`
 	DeliveryTypes     []string `json:"delivery_types" bson:"delivery_types"`
 	ImageNames        []string `json:"images_names" bson:"images_names"`
+	ThumbnailNames    []string `json:"thumbnail_names" bson:"thumbnail_names"`
 	Tags              []string `json:"tags" bson:"tags"`
 }
 
