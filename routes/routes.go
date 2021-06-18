@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
-	"os"
-	"path/filepath"
 
 	"enstrurent.com/server/db"
 	"github.com/go-chi/chi/middleware"
@@ -25,11 +23,6 @@ func Routes(db *db.DBHandle) *chi.Mux {
 	router.Use(JSONResponseMiddleware)
 	router.Route("/", allRoutes)
 
-	workDir, _ := os.Getwd()
-	imagesDir := filepath.Join("assets", "images")
-	filesDir := http.Dir(filepath.Join(workDir, imagesDir))
-	GetPhotos(router, "/images", filesDir)
-
 	return router
 }
 
@@ -43,7 +36,7 @@ func allRoutes(r chi.Router) {
 	r.With(AuthMiddleware).Route("/renters", renterRoutes)
 	r.With(AuthMiddleware).Route("/orders", orderRoutes)
 	r.Route("/addresses", addressRoutes)
-	r.With(AuthMiddleware).Route("/images", ImageRoutes)
+	r.Route("/images", ImageRoutes)
 }
 
 func authRoutes(r chi.Router) {
@@ -75,8 +68,8 @@ func renterRoutes(r chi.Router) {
 func orderRoutes(r chi.Router) {
 	r.Get("/", getOrdersByEmail) // TODO paginate
 	r.Post("/", createOrder)
-	r.Put("/", updateOrder)
-	r.Delete("/{order_id}", cancelOrder)
+	r.Put("/", updateOrderStatus)
+	// r.Delete("/{order_id}", cancelOrder)
 }
 
 func addressRoutes(r chi.Router) {
@@ -89,7 +82,7 @@ func addressRoutes(r chi.Router) {
 }
 
 func ImageRoutes(r chi.Router) {
-	r.Post("/", addPhoto)
-	r.Delete("/{id}&{thumbnail}", deletePhoto)
-	r.Put("/", updatePhoto)
+	r.With(AuthMiddleware).Post("/", addPhoto)
+	r.With(AuthMiddleware).Delete("/{id}&{thumbnail}", deletePhoto)
+	r.Get("/{photoName}", getPhoto)
 }

@@ -2,6 +2,8 @@ package routes
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"net/http"
 
 	"enstrurent.com/server/db"
@@ -64,6 +66,7 @@ func createOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
 func OrdersCommon(order db.IOrder, clientID string, mdb *db.DBHandle, w http.ResponseWriter, r *http.Request) {
 	order.InitializeOrder(clientID, mdb)
 	json.NewDecoder(r.Body).Decode(&order)
@@ -78,10 +81,57 @@ func OrdersCommon(order db.IOrder, clientID string, mdb *db.DBHandle, w http.Res
 	json.NewEncoder(w).Encode(order)
 }
 
-func updateOrder(w http.ResponseWriter, r *http.Request) {
-
+func updateOrderStatus(w http.ResponseWriter, r *http.Request) { //FIXME
+	_, err := validateUserForOrder(r)
+	if err != nil {
+		if errors.Is(err, ErrUnauthorized) {
+			http.Error(w, err.Error(), http.StatusUnauthorized)
+			return
+		} else {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+		}
+	}
+	var updatedOrder map[string]interface{}
+	json.NewDecoder(r.Body).Decode(&updatedOrder)
+	// collection := getDB(r).OrdersCollection()
+	// collection.ReplaceOne()
 }
 
-func cancelOrder(w http.ResponseWriter, r *http.Request) {
-	// TODO Soft delete
+func validateUserForOrder(r *http.Request) (interface{}, error) {
+	orderID := r.Header.Get("order_id")
+	id, err := primitive.ObjectIDFromHex(orderID)
+	if err != nil {
+		return nil, ErrWentWrong
+	}
+	userRole := r.Context().Value(UserRoleContext)
+	userEmail := r.Context().Value(UserEmailContext).(string)
+	mdb := getDB(r)
+	result := mdb.OrdersCollection().FindOne(r.Context(), bson.M{"_id": id})
+
+	if result.Err() != nil {
+		fmt.Println(result.Err())
+		return nil, ErrWentWrong
+	}
+	var order map[string]interface{}
+	result.Decode(&order)
+
+	if userRole == ClientRole {
+		client := mdb.GetClientByEmail(r.Context(), userEmail)
+		if client.ID.Hex() != order["client_id"] {
+			return nil, ErrUnauthorized
+		}
+	} else if userRole == RenterRole {
+		renter := mdb.GetRenterByEmail(r.Context(), userEmail)
+		// We're getting the product of the order for validating renter's id.
+		productID, _ := primitive.ObjectIDFromHex(fmt.Sprint(order["product_id"]))
+
+		if product, err := mdb.GetProductByID(r.Context(), productID); err != nil {
+			return nil, err
+		} else if product.RenterID != renter.ID.Hex() {
+			return nil, ErrUnauthorized
+		}
+	} else {
+		return nil, ErrUnauthorized
+	}
+	return order, nil
 }

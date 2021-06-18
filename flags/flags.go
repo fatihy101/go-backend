@@ -12,19 +12,16 @@ import (
 )
 
 type Configuration struct {
-	SERVER_PORT string
-	CON_STR     string
-	DBNAME      string
-	JWT_KEY     string
+	SERVER_PORT     string
+	CON_STR         string
+	DBNAME          string
+	JWT_KEY         string
+	GCP_BUCKET_NAME string
 }
 
 var config Configuration
 
 func InitConfig() Configuration {
-	err := os.Mkdir("assets/images", 0777)
-	if err != nil {
-		fmt.Println("WARNING: " + err.Error())
-	}
 	// Open our jsonFile
 	jsonFile, err := os.Open("assets/json/config.json")
 
@@ -34,7 +31,6 @@ func InitConfig() Configuration {
 	defer jsonFile.Close()
 
 	byteValue, _ := ioutil.ReadAll(jsonFile)
-
 	json.Unmarshal(byteValue, &config)
 	return config
 }
