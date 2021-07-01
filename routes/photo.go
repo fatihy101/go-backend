@@ -3,7 +3,6 @@ package routes
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -13,14 +12,7 @@ import (
 )
 
 func addPhoto(w http.ResponseWriter, r *http.Request) {
-	// Saves photo to local storage and creates thumbnail.
-	isThumbnailStr := r.FormValue("thumbnail")
-	isThumbnail, err := strconv.ParseBool(isThumbnailStr)
-	if err != nil {
-		isThumbnail = false
-	}
-	fmt.Print(isThumbnail) // FIXME create thumbnail
-	// imageNames, err := saveImageLocal(r, isThumbnail)
+	// Saves photo to local storage.
 	imageNames, err := utils.UploadToCloud(r)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)

@@ -110,7 +110,7 @@ type Product struct {
 	DepositPrice      float32    `json:"deposit_price" bson:"deposit_price"`
 	StockQuantity     int        `json:"stock_quantity" bson:"stock_quantity"`
 	DeliveryTypes     []string   `json:"delivery_types" bson:"delivery_types"`
-	ImageNames        []string   `json:"images_names" bson:"images_names"`
+	ImageNames        []string   `json:"image_names" bson:"image_names"`
 	ThumbnailNames    []string   `json:"thumbnail_names" bson:"thumbnail_names"`
 	Tags              []string   `json:"tags" bson:"tags"`
 	PaymentMethods    []string   `json:"payment_methods" bson:"payment_methods"`
