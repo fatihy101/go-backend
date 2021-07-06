@@ -72,18 +72,19 @@ type OrderBase struct {
 	ProductID     string `json:"product_id" bson:"product_id"`
 	ClientID      string `json:"client_id" bson:"client_id"`
 	AddressID     string `json:"address_id" bson:"address_id"`
+	RenterID      string `json:"renter_id" bson:"renter_id"`
 	DeliveryType  string `json:"delivery_type" bson:"delivery_type"`
 	PaymentMethod string `json:"payment_method" bson:"payment_method"`
 	OrderStatus   string `json:"order_status" bson:"order_status"`
 }
 
 type RentOrder struct {
-	OrderBase           `bson:",inline"`
-	InitalImageNames    []string `json:"initial_image_names" bson:"initial_image_names"`
-	FinalImageNames     []string `json:"final_image_names" bson:"final_image_names"`
-	NumberOfDaysForRent int      `json:"number_of_days_for_rent" bson:"number_of_days_for_rent"`
-	DepositPrice        float32  `json:"deposit_price" bson:"deposit_price"`
-	RentingPrice        float32  `json:"renting_price" bson:"renting_price"`
+	OrderBase        `bson:",inline"`
+	InitalImageNames []string    `json:"initial_image_names" bson:"initial_image_names"`
+	FinalImageNames  []string    `json:"final_image_names" bson:"final_image_names"`
+	DepositPrice     float32     `json:"deposit_price" bson:"deposit_price"`
+	RentingPrice     float32     `json:"renting_price" bson:"renting_price"`
+	RentedDateRange  []time.Time `json:"rented_date_range" bson:"rented_date_range"`
 }
 
 type PurchaseOrder struct {
@@ -91,31 +92,31 @@ type PurchaseOrder struct {
 	Price     float32 `json:"price" bson:"price"`
 }
 
-// TODO Split the data as "rentaL_fields" and "selling_fileds" as two.
+// TODO Split the data as "rentaL_fields" and "selling_fields" as two.
 type Product struct {
 	Base              `bson:",inline"`
-	RenterID          string     `json:"renter_id" bson:"renter_id"`
-	City              string     `json:"city" bson:"city"`
-	Category          string     `json:"category" bson:"category"`
-	Brand             string     `json:"brand" bson:"brand"`
-	Model             string     `json:"model" bson:"model"`
-	Info              string     `json:"info" bson:"info"`
-	IsRental          bool       `json:"is_rental" bson:"is_rental"`
-	IsDepositRequired bool       `json:"is_deposit_required" bson:"is_deposit_required"`
-	IsOpenToSell      bool       `json:"is_open_to_sell" bson:"is_open_to_sell"`
-	IsUsed            bool       `json:"is_used" bson:"is_used"`
-	MaxRentalDays     int        `json:"max_rental_days" bson:"max_rental_days"`
-	DailyPrice        float32    `json:"daily_price" bson:"daily_price"`
-	FullPrice         float32    `json:"full_price" bson:"full_price"`
-	DepositPrice      float32    `json:"deposit_price" bson:"deposit_price"`
-	StockQuantity     int        `json:"stock_quantity" bson:"stock_quantity"`
-	DeliveryTypes     []string   `json:"delivery_types" bson:"delivery_types"`
-	ImageNames        []string   `json:"image_names" bson:"image_names"`
-	ThumbnailNames    []string   `json:"thumbnail_names" bson:"thumbnail_names"`
-	Tags              []string   `json:"tags" bson:"tags"`
-	PaymentMethods    []string   `json:"payment_methods" bson:"payment_methods"`
-	RentedDaysRange   [][]string `json:"rented_days_range" bson:"rented_days_range"`
-	IsPublished       bool       `json:"is_published" bson:"is_published"` // products can be saved as draft
+	RenterID          string        `json:"renter_id" bson:"renter_id"`
+	City              string        `json:"city" bson:"city"`
+	Category          string        `json:"category" bson:"category"`
+	Brand             string        `json:"brand" bson:"brand"`
+	Model             string        `json:"model" bson:"model"`
+	Info              string        `json:"info" bson:"info"`
+	IsRental          bool          `json:"is_rental" bson:"is_rental"`
+	IsDepositRequired bool          `json:"is_deposit_required" bson:"is_deposit_required"`
+	IsOpenToSell      bool          `json:"is_open_to_sell" bson:"is_open_to_sell"`
+	IsUsed            bool          `json:"is_used" bson:"is_used"`
+	MaxRentalDays     int           `json:"max_rental_days" bson:"max_rental_days"`
+	DailyPrice        float32       `json:"daily_price" bson:"daily_price"`
+	FullPrice         float32       `json:"full_price" bson:"full_price"`
+	DepositPrice      float32       `json:"deposit_price" bson:"deposit_price"`
+	StockQuantity     int           `json:"stock_quantity" bson:"stock_quantity"`
+	DeliveryTypes     []string      `json:"delivery_types" bson:"delivery_types"`
+	ImageNames        []string      `json:"image_names" bson:"image_names"`
+	ThumbnailNames    []string      `json:"thumbnail_names" bson:"thumbnail_names"`
+	Tags              []string      `json:"tags" bson:"tags"`
+	PaymentMethods    []string      `json:"payment_methods" bson:"payment_methods"`
+	RentedDaysRanges  [][]time.Time `json:"rented_days_ranges" bson:"rented_days_ranges"`
+	IsPublished       bool          `json:"is_published" bson:"is_published"` // products can be saved as draft
 }
 
 type City struct {

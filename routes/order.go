@@ -9,6 +9,7 @@ import (
 	"enstrurent.com/server/db"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 const (
@@ -17,21 +18,27 @@ const (
 )
 
 func getOrdersByEmail(w http.ResponseWriter, r *http.Request) {
-	email, err := validateClient(r)
-
-	if err != nil {
-		http.Error(w, ErrUnauthorized.Error(), http.StatusUnauthorized)
-		return
-	}
-
 	mdb := getDB(r)
-	client := mdb.GetClientByEmail(r.Context(), email)
 
-	cursor, err := mdb.OrdersCollection().Find(r.Context(), bson.M{"client_id": client.ID.Hex()})
+	role := r.Context().Value(UserRoleContext)
+	email := r.Context().Value(UserEmailContext).(string)
+	var cursor *mongo.Cursor
+	var err error
+	if role == ClientRole {
+		client := mdb.GetClientByEmail(r.Context(), email)
+		cursor, err = mdb.OrdersCollection().Find(r.Context(), bson.M{"client_id": client.ID.Hex()})
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
 
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
+	} else if role == RenterRole {
+		renter := mdb.GetRenterByEmail(r.Context(), email)
+		cursor, err = mdb.OrdersCollection().Find(r.Context(), bson.M{"renter_id": renter.ID})
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
 	}
 	var results []map[string]interface{}
 	err = cursor.All(r.Context(), &results)
@@ -40,6 +47,7 @@ func getOrdersByEmail(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
 	json.NewEncoder(w).Encode(results)
+
 }
 
 func createOrder(w http.ResponseWriter, r *http.Request) {
