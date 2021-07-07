@@ -34,7 +34,7 @@ func getOrdersByEmail(w http.ResponseWriter, r *http.Request) {
 
 	} else if role == RenterRole {
 		renter := mdb.GetRenterByEmail(r.Context(), email)
-		cursor, err = mdb.OrdersCollection().Find(r.Context(), bson.M{"renter_id": renter.ID})
+		cursor, err = mdb.OrdersCollection().Find(r.Context(), bson.M{"renter_id": renter.ID.Hex()})
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
