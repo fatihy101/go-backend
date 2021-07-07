@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"time"
 
 	"enstrurent.com/server/db"
 	"go.mongodb.org/mongo-driver/bson"
@@ -52,32 +53,45 @@ func getOrdersByEmail(w http.ResponseWriter, r *http.Request) {
 
 func createOrder(w http.ResponseWriter, r *http.Request) {
 	email, err := validateClient(r)
-
 	if err != nil {
 		http.Error(w, ErrUnauthorized.Error(), http.StatusUnauthorized)
 		return
 	}
-	orderType := r.Header.Get("order_type")
+	var order map[string]interface{}
+
+	dec := json.NewDecoder(r.Body)
+	dec.DisallowUnknownFields()
+	err = dec.Decode(&order)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 	mdb := getDB(r)
 	clientID := mdb.GetClientByEmail(r.Context(), email).ID.Hex()
 
-	if orderType == RentOrder {
-		var order db.RentOrder
-		OrdersCommon(&order, clientID, mdb, w, r)
+	order["client_id"] = clientID
+	order["order_status"] = "Sipariş Alındı"
+	order["CreatedAt"] = time.Now()
 
-	} else if orderType == PurchaseOrder {
-		var order db.PurchaseOrder
-		OrdersCommon(&order, clientID, mdb, w, r)
-
-	} else {
-		http.Error(w, "order type is empty", http.StatusBadRequest)
+	result, err := mdb.OrdersCollection().InsertOne(r.Context(), order)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	order["id"] = result.InsertedID.(primitive.ObjectID)
+	json.NewEncoder(w).Encode(order)
 }
 
 func OrdersCommon(order db.IOrder, clientID string, mdb *db.DBHandle, w http.ResponseWriter, r *http.Request) {
 	order.InitializeOrder(clientID, mdb)
-	json.NewDecoder(r.Body).Decode(&order)
+	dec := json.NewDecoder(r.Body)
+	dec.DisallowUnknownFields()
+	err := dec.Decode(&order)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 	order.InitializeOrder(clientID, mdb)
 	result, err := mdb.OrdersCollection().InsertOne(r.Context(), order)
 	if err != nil {

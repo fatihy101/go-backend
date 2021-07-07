@@ -80,11 +80,15 @@ type OrderBase struct {
 
 type RentOrder struct {
 	OrderBase        `bson:",inline"`
-	InitalImageNames []string    `json:"initial_image_names" bson:"initial_image_names"`
-	FinalImageNames  []string    `json:"final_image_names" bson:"final_image_names"`
-	DepositPrice     float32     `json:"deposit_price" bson:"deposit_price"`
-	RentingPrice     float32     `json:"renting_price" bson:"renting_price"`
-	RentedDateRange  []time.Time `json:"rented_date_range" bson:"rented_date_range"`
+	InitalImageNames []string  `json:"initial_image_names" bson:"initial_image_names"`
+	FinalImageNames  []string  `json:"final_image_names" bson:"final_image_names"`
+	DepositPrice     float32   `json:"deposit_price" bson:"deposit_price"`
+	RentingPrice     float32   `json:"renting_price" bson:"renting_price"`
+	RentedDateRange  DateRange `json:"rented_date_range" bson:"rented_date_range"`
+}
+type DateRange struct {
+	Start string `json:"start" bson:"start"`
+	End   string `json:"end" bson:"end"`
 }
 
 type PurchaseOrder struct {
