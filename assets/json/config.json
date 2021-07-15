@@ -1,7 +1,7 @@
 {
     "SERVER_PORT":":8080",
-    "CON_STR":"***REMOVED***",
+    "CON_STR":"",
     "DBNAME":"enstrurent",
-    "JWT_KEY":"***REMOVED***",
-    "GCP_BUCKET_NAME":"***REMOVED***"
+    "JWT_KEY":"",
+    "GCP_BUCKET_NAME":""
 }
